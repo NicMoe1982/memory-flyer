@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>When Memory Takes the Stand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    box-sizing: border-box;
+    --paper: #EFE7D6;
+    --paper-card: #F8F3E8;
+    --ink: #221D16;
+    --ink-soft: #4A4335;
+    --navy: #26364F;
+    --navy-soft: #3C4E6B;
+    --rust: #9B3A26;
+    --brass: #A07A2C;
+    --line: #CFBB8B;
+    --line-soft: #DFD2AE;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *, *::before, *::after { box-sizing: inherit; }
+
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  body {
+    margin: 0;
+    background: #DDD2B4;
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    padding: 28px 14px 44px;
+  }
+
+  .sheet {
+    width: 100%;
+    max-width: 900px;
+    background: var(--paper);
+    border: 1px solid #C9BA92;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset, 0 18px 40px rgba(34,29,22,0.18);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sheet::before {
+    /* faint left margin rule, like a legal pad / case file page */
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 64px;
+    width: 1px;
+    background: rgba(155,58,38,0.15);
+    pointer-events: none;
+  }
+
+  @media (max-width: 620px) {
+    .sheet::before { left: 22px; }
+  }
+
+  /* ---------- Masthead ---------- */
+
+  .masthead {
+    padding: 40px 48px 26px;
+    border-bottom: 2px solid var(--navy);
+  }
+
+  .docket {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: var(--navy-soft);
+    margin: 0 0 14px;
+  }
+
+  h1 {
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    font-size: clamp(34px, 5.4vw, 54px);
+    line-height: 1.04;
+    letter-spacing: -0.01em;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  .dek {
+    font-size: 16.5px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 0;
+  }
+
+  /* ---------- Hero ---------- */
+
+  .hero {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 0;
+    border-bottom: 2px solid var(--navy);
+  }
+
+  @media (max-width: 720px) {
+    .hero { grid-template-columns: 1fr; }
+  }
+
+  .hero-narrative {
+    padding: 30px 48px 34px;
+    border-right: 1px solid var(--line);
+  }
+
+  @media (max-width: 720px) {
+    .hero-narrative { border-right: none; border-bottom: 1px solid var(--line); }
+  }
+
+  .hero-narrative .case-name {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 19px;
+    color: var(--navy);
+    margin: 0 0 10px;
+  }
+
+  .hero-narrative p {
+    font-size: 15px;
+    line-height: 1.62;
+    color: var(--ink);
+    margin: 0 0 12px;
+  }
+
+  .hero-narrative p:last-child { margin-bottom: 0; }
+
+  .hero-side {
+    padding: 30px 40px 34px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    background: rgba(155,58,38,0.035);
+  }
+
+  .stat-block .stat-num {
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    font-size: 46px;
+    line-height: 1;
+    color: var(--rust);
+  }
+
+  .stat-block .stat-label {
+    font-size: 13.5px;
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+
+  .pull-quote {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+  }
+
+  .pq-before {
+    font-family: 'Newsreader', serif;
+    font-style: italic;
+    font-size: 21px;
+    color: var(--ink-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--rust);
+    text-decoration-thickness: 2px;
+    display: block;
+  }
+
+  .pq-after {
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    font-size: 25px;
+    color: var(--rust);
+    display: block;
+    margin-top: 4px;
+  }
+
+  .pq-attr {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+
+  /* ---------- Exhibits grid ---------- */
+
+  .exhibits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media (max-width: 720px) {
+    .exhibits { grid-template-columns: 1fr; }
+  }
+
+  .exhibit {
+    padding: 30px 40px 28px;
+    border-right: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .exhibit:nth-child(2n) { border-right: none; }
+
+  @media (max-width: 720px) {
+    .exhibit { border-right: none !important; }
+  }
+
+  .exhibit-tag {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--paper-card);
+    background: var(--navy);
+    padding: 3px 9px 4px;
+    transform: rotate(-1deg);
+    margin-bottom: 14px;
+  }
+
+  .exhibit h2 {
+    font-family: 'Newsreader', serif;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+
+  .exhibit ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .exhibit li {
+    position: relative;
+    padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink);
+    margin-bottom: 11px;
+  }
+
+  .exhibit li:last-child { margin-bottom: 0; }
+
+  .exhibit li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    width: 6px;
+    height: 6px;
+    background: var(--brass);
+  }
+
+  .exhibit li strong {
+    color: var(--navy);
+    font-weight: 600;
+  }
+
+  /* ---------- Footer ---------- */
+
+  footer {
+    padding: 24px 48px 30px;
+    background: var(--navy);
+    color: #E7E1D2;
+  }
+
+  footer .fr-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.02em;
+    color: #C7B788;
+    margin: 0 0 10px;
+  }
+
+  footer ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    columns: 2;
+    column-gap: 36px;
+  }
+
+  @media (max-width: 620px) {
+    footer ul { columns: 1; }
+  }
+
+  footer li {
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: #D9D1BC;
+    margin-bottom: 8px;
+    break-inside: avoid;
+  }
+
+  @media (max-width: 620px) {
+    .masthead { padding: 30px 22px 22px; }
+    .hero-narrative, .hero-side, .exhibit { padding-left: 22px; padding-right: 22px; }
+    footer { padding: 22px 22px 26px; }
+  }
+
+  @media print {
+    body { background: #fff; padding: 0; }
+    .sheet { box-shadow: none; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+<div class="sheet">
+
+  <div class="masthead">
+    <p class="docket">Burlington, North Carolina — 1984</p>
+    <h1>When Memory Takes the Stand</h1>
+    <p class="dek">What decades of DNA exonerations reveal about eyewitness identification, and what it means for the judges and juries who rely on it.</p>
+  </div>
+
+  <div class="hero">
+    <div class="hero-narrative">
+      <p class="case-name">The case that changed how North Carolina runs a lineup</p>
+      <p>In July 1984, a college student was raped in her Burlington apartment. Determined to survive and help convict her attacker, she studied his face throughout the assault, promising herself she would remember every detail.</p>
+      <p>Days later she picked Ronald Cotton from a photo lineup, then again from a physical lineup. At trial she testified with total confidence. Cotton was convicted and sentenced to life plus fifty years.</p>
+      <p>Eleven years later, DNA testing proved she had identified the wrong man. Her memory hadn't lied out of malice — it had simply done what memories do: filled gaps, absorbed new information, and grown more confident even as it grew less accurate.</p>
+    </div>
+    <div class="hero-side">
+      <div class="stat-block">
+        <div class="stat-num">~70%</div>
+        <div class="stat-label">of the hundreds of people exonerated by DNA nationwide were convicted, at least in part, on an eyewitness identification that turned out to be wrong.</div>
+      </div>
+      <div class="pull-quote">
+        <span class="pq-before">"Absolutely certain."</span>
+        <span class="pq-after">The wrong man.</span>
+        <p class="pq-attr">Jennifer Thompson's trial testimony, on identifying Ronald Cotton — 11 years before DNA proved otherwise</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="exhibits">
+
+    <div class="exhibit">
+      <span class="exhibit-tag">Exhibit A</span>
+      <h2>What a false memory actually is</h2>
+      <ul>
+        <li>Memory isn't a recording that gets played back. It's <strong>rebuilt each time</strong> it's recalled — and every rebuild is a chance for it to shift.</li>
+        <li>Information encountered <strong>after</strong> an event — a leading question, a detective's comment, a photo seen later — can blend into the original memory without the person noticing the seam.</li>
+        <li>Confidence is not a measure of accuracy. A witness can feel completely certain about a detail that is completely wrong.</li>
+        <li>Psychologist Elizabeth Loftus has shown that people shown an altered version of an image afterward will often adopt the altered version as their memory, discarding the accurate one entirely.</li>
+      </ul>
+    </div>
+
+    <div class="exhibit">
+      <span class="exhibit-tag">Exhibit B</span>
+      <h2>Why eyewitness testimony goes wrong</h2>
+      <ul>
+        <li><strong>Stress narrows attention.</strong> Under threat — a knife, an assault — attention often locks onto the danger itself, leaving less capacity to encode the surrounding face.</li>
+        <li><strong>Real recognition is fast.</strong> Psychologist Gary Wells has found that genuine identifications typically take seconds; a witness who deliberates for minutes, comparing photo against photo, is often doing something other than simple recognition.</li>
+        <li><strong>Feedback inflates confidence.</strong> In controlled studies, witnesses who picked the wrong person and were then told "you got the suspect" became dramatically more confident and recalled a clearer view of the crime — though nothing about the actual memory had changed.</li>
+        <li>When the real perpetrator isn't in a lineup, witnesses tend to pick whoever looks closest to their memory — not no one.</li>
+      </ul>
+    </div>
+
+    <div class="exhibit">
+      <span class="exhibit-tag">Exhibit C</span>
+      <h2>What's at stake for the justice system</h2>
+      <ul>
+        <li>Eyewitness misidentification has been a factor in the large majority of the country's DNA exonerations — by some counts, more than three in four.</li>
+        <li>A confident witness pointing across a courtroom remains some of the most persuasive evidence a jury will ever see, even though confidence <strong>at trial</strong> — often expressed after months or years of retelling — says little about accuracy at the moment of the original identification.</li>
+        <li>Wrongful convictions carry a second victim: Ronald Cotton served roughly eleven years for a crime he didn't commit, while the actual assailant remained free.</li>
+      </ul>
+    </div>
+
+    <div class="exhibit">
+      <span class="exhibit-tag">Exhibit D</span>
+      <h2>Practical guidance for the bench and jury box</h2>
+      <ul>
+        <li><strong>Ask how the identification was collected.</strong> Was it administered by someone who didn't know who the suspect was ("blind" administration)? Were photos shown one at a time ("sequential") rather than side by side?</li>
+        <li><strong>Weigh certainty at the time of the identification</strong>, not certainty at trial. Confidence tends to grow with each retelling and every piece of confirming feedback.</li>
+        <li><strong>Ask what happened between the identification and the testimony</strong> — news coverage, conversations with police, repeated interviews. Any of these can reshape what a witness remembers seeing.</li>
+        <li><strong>Treat memory as reconstructed, not recorded</strong> — for every witness, in every case, regardless of how sincere or certain they appear.</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <footer>
+    <p class="fr-title">Sources &amp; further viewing</p>
+    <ul>
+      <li>CBS News, <em>60 Minutes</em> — "Eyewitness," on the case of Jennifer Thompson and Ronald Cotton</li>
+      <li>Innocence Project — data and recommendations on eyewitness identification reform</li>
+      <li>Research by Gary L. Wells, Iowa State University, on eyewitness confidence and lineup procedure</li>
+      <li>Research by Elizabeth F. Loftus, UC Irvine, on the misinformation effect and memory malleability</li>
+      <li>Jennifer Thompson-Cannino &amp; Ronald Cotton, <em>Picking Cotton: Our Memoir of Injustice and Redemption</em></li>
+      <li>North Carolina eyewitness identification reform statute, adopted following the Cotton case</li>
+    </ul>
+  </footer>
+
+</div>
+</body>
+</html>
